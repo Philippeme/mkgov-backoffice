@@ -1,337 +1,410 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ request.reference }} - {{ 'requests.title'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'menu.procedures'|trans }} - {{ parent() }}{% endblock %}
 
 {% block content %}
-<div class="request-detail-container">
-    {# En-tête avec actions #}
+<div class="procedures-container">
+    {# En-tête de la page #}
     <div class="page-header mb-4">
         <div class="row align-items-center">
-            <div class="col-lg-8">
-                <div class="d-flex align-items-center">
-                    <a href="{{ path('admin_requests_index') }}" class="btn btn-outline-secondary me-3">
-                        <i class="fas fa-arrow-left"></i>
+            <div class="col-lg-6">
+                <h1 class="page-title">
+                    <i class="fas fa-project-diagram me-3"></i>
+                    {{ 'menu.procedures'|trans }}
+                </h1>
+                <p class="page-subtitle text-muted">
+                    {{ 'procedures.subtitle'|trans }}
+                </p>
+            </div>
+            <div class="col-lg-6 text-lg-end">
+                <div class="page-actions">
+                    <a href="{{ path('admin_procedures_new') }}" class="btn btn-primary me-2">
+                        <i class="fas fa-plus me-1"></i>{{ 'menu.new_procedure'|trans }}
                     </a>
-                    <div>
-                        <h1 class="page-title mb-1">
-                            {{ request.reference }}
-                            <span class="badge bg-{{ request.status_color }} ms-2">
-                                <i class="fas fa-{{ request.status_icon }} me-1"></i>
-                                {{ request.status|trans }}
-                            </span>
-                        </h1>
-                        <p class="page-subtitle text-muted mb-0">
-                            {{ request.service_name|trans }} - {{ 'requests.submitted_on'|trans }} {{ request.created_at|date('d/m/Y H:i') }}
-                        </p>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-download me-1"></i>{{ 'actions.export'|trans }}
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ path('admin_procedures_export', {'format': 'excel'}) }}">
+                                <i class="fas fa-file-excel me-2"></i>{{ 'formats.excel'|trans }}
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ path('admin_procedures_export', {'format': 'csv'}) }}">
+                                <i class="fas fa-file-csv me-2"></i>{{ 'formats.csv'|trans }}
+                            </a></li>
+                        </ul>
+                    </div>
+                    <a href="{{ path('admin_procedures_import') }}" class="btn btn-outline-primary ms-2">
+                        <i class="fas fa-upload me-1"></i>{{ 'procedures.import'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Statistiques rapides #}
+    <div class="procedures-stats mb-4">
+        <div class="row g-3">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box card border-start border-primary border-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stat-icon bg-primary text-white rounded me-3">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0">{{ statistics.total ?? 0 }}</h4>
+                                <small class="text-muted">{{ 'procedures.total_procedures'|trans }}</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 text-lg-end">
-                <div class="page-actions">
-                    <a href="{{ path('admin_requests_edit', {'id': request.id}) }}" class="btn btn-primary me-2">
-                        <i class="fas fa-edit me-1"></i>{{ 'actions.edit'|trans }}
-                    </a>
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fas fa-exchange-alt me-1"></i>{{ 'actions.change_status'|trans }}
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" onclick="changeStatus({{ request.id }}, 'processing')">
-                                <i class="fas fa-play text-primary me-2"></i>{{ 'status.processing'|trans }}
-                            </a></li>
-                            <li><a class="dropdown-item" href="#" onclick="changeStatus({{ request.id }}, 'completed')">
-                                <i class="fas fa-check text-success me-2"></i>{{ 'status.completed'|trans }}
-                            </a></li>
-                            <li><a class="dropdown-item" href="#" onclick="changeStatus({{ request.id }}, 'rejected')">
-                                <i class="fas fa-times text-danger me-2"></i>{{ 'status.rejected'|trans }}
-                            </a></li>
-                        </ul>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box card border-start border-success border-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stat-icon bg-success text-white rounded me-3">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0">{{ statistics.active ?? 0 }}</h4>
+                                <small class="text-muted">{{ 'procedures.active_procedures'|trans }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box card border-start border-warning border-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stat-icon bg-warning text-white rounded me-3">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0">{{ statistics.draft ?? 0 }}</h4>
+                                <small class="text-muted">{{ 'procedures.draft_procedures'|trans }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box card border-start border-info border-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stat-icon bg-info text-white rounded me-3">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0">{{ statistics.avg_completion_time ?? 0 }}</h4>
+                                <small class="text-muted">{{ 'procedures.avg_completion_days'|trans }}</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        {# Colonne principale - Informations de la demande #}
-        <div class="col-lg-8">
-            {# Informations générales #}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-info-circle me-2"></i>{{ 'requests.general_information'|trans }}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="info-group mb-3">
-                                <label class="info-label">{{ 'requests.reference'|trans }}</label>
-                                <div class="info-value">{{ request.reference }}</div>
-                            </div>
-                            <div class="info-group mb-3">
-                                <label class="info-label">{{ 'requests.service'|trans }}</label>
-                                <div class="info-value">
-                                    <i class="fas fa-{{ request.service_icon ?? 'file' }} me-2 text-primary"></i>
-                                    {{ request.service_name|trans }}
-                                </div>
-                            </div>
-                            <div class="info-group mb-3">
-                                <label class="info-label">{{ 'requests.priority'|trans }}</label>
-                                <div class="info-value">
-                                    <span class="badge bg-{{ request.priority <= 2 ? 'danger' : (request.priority <= 3 ? 'warning' : 'secondary') }}">
-                                        {{ request.priority <= 2 ? 'priority.high'|trans : (request.priority <= 3 ? 'priority.medium'|trans : 'priority.normal'|trans) }}
-                                    </span>
-                                </div>
+    {# Filtres de recherche #}
+    <div class="procedures-filters mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-search me-2"></i>{{ 'filters.search_and_filter'|trans }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{{ path('admin_procedures_index') }}" id="filtersForm">
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <label for="search" class="form-label">{{ 'filters.search'|trans }}</label>
+                            <input type="text" class="form-control" id="search" name="search" 
+                                   value="{{ current_filters.search }}" 
+                                   placeholder="{{ 'procedures.search_placeholder'|trans }}">
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <label for="category" class="form-label">{{ 'procedures.category'|trans }}</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">{{ 'procedures.all_categories'|trans }}</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" {{ current_filters.category == category.id ? 'selected' : '' }}>
+                                        {{ category.name|trans }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <label for="status" class="form-label">{{ 'filters.status'|trans }}</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="">{{ 'filters.all_statuses'|trans }}</option>
+                                <option value="active" {{ current_filters.status == 'active' ? 'selected' : '' }}>{{ 'status.active'|trans }}</option>
+                                <option value="draft" {{ current_filters.status == 'draft' ? 'selected' : '' }}>{{ 'status.draft'|trans }}</option>
+                                <option value="archived" {{ current_filters.status == 'archived' ? 'selected' : '' }}>{{ 'status.archived'|trans }}</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <label for="complexity" class="form-label">{{ 'procedures.complexity'|trans }}</label>
+                            <select class="form-select" id="complexity" name="complexity">
+                                <option value="">{{ 'procedures.all_complexities'|trans }}</option>
+                                <option value="simple" {{ current_filters.complexity == 'simple' ? 'selected' : '' }}>{{ 'procedures.simple'|trans }}</option>
+                                <option value="medium" {{ current_filters.complexity == 'medium' ? 'selected' : '' }}>{{ 'procedures.medium'|trans }}</option>
+                                <option value="complex" {{ current_filters.complexity == 'complex' ? 'selected' : '' }}>{{ 'procedures.complex'|trans }}</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3 col-md-6 d-flex align-items-end">
+                            <div class="w-100">
+                                <button type="submit" class="btn btn-primary me-2">
+                                    <i class="fas fa-search me-1"></i>{{ 'actions.search'|trans }}
+                                </button>
+                                <a href="{{ path('admin_procedures_index') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i>{{ 'actions.clear'|trans }}
+                                </a>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="info-group mb-3">
-                                <label class="info-label">{{ 'requests.created_at'|trans }}</label>
-                                <div class="info-value">{{ request.created_at|date('d/m/Y H:i') }}</div>
-                            </div>
-                            <div class="info-group mb-3">
-                                <label class="info-label">{{ 'requests.region'|trans }}</label>
-                                <div class="info-value">{{ request.region }}</div>
-                            </div>
-                            <div class="info-group mb-3">
-                                <label class="info-label">{{ 'requests.processing_time'|trans }}</label>
-                                <div class="info-value">
-                                    {% set processingDays = date().diff(request.created_at).days %}
-                                    {{ processingDays }} {{ 'days'|trans }}
-                                </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {# Liste des procédures #}
+    <div class="procedures-list">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="card-title mb-0">
+                            {{ 'procedures.list_title'|trans }} 
+                            <span class="badge bg-secondary">{{ pagination.total_items }}</span>
+                        </h5>
+                    </div>
+                    <div class="col-auto">
+                        <div class="row g-2">
+                            <div class="col-auto">
+                                <select class="form-select form-select-sm" id="itemsPerPage" onchange="changeItemsPerPage(this.value)">
+                                    <option value="10" {{ app.request.get('limit') == '10' ? 'selected' : '' }}>10</option>
+                                    <option value="20" {{ app.request.get('limit') == '20' ? 'selected' : '' }}>20</option>
+                                    <option value="50" {{ app.request.get('limit') == '50' ? 'selected' : '' }}>50</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            {# Informations du demandeur #}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-user me-2"></i>{{ 'requests.citizen_information'|trans }}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="info-group mb-3">
-                                <label class="info-label">{{ 'requests.citizen_name'|trans }}</label>
-                                <div class="info-value">{{ request.citizen_name }}</div>
-                            </div>
-                            <div class="info-group mb-3">
-                                <label class="info-label">{{ 'requests.email'|trans }}</label>
-                                <div class="info-value">
-                                    <a href="mailto:{{ request.citizen_email }}">{{ request.citizen_email }}</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-group mb-3">
-                                <label class="info-label">{{ 'requests.phone'|trans }}</label>
-                                <div class="info-value">{{ request.citizen_phone ?? 'N/A' }}</div>
-                            </div>
-                            <div class="info-group mb-3">
-                                <label class="info-label">{{ 'requests.address'|trans }}</label>
-                                <div class="info-value">{{ request.citizen_address ?? 'N/A' }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {# Timeline de traitement #}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-history me-2"></i>{{ 'requests.processing_timeline'|trans }}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="timeline">
-                        {% for event in timeline %}
-                            <div class="timeline-item">
-                                <div class="timeline-marker bg-{{ event.status == 'completed' ? 'success' : (event.status == 'processing' ? 'primary' : 'secondary') }}">
-                                    <i class="fas fa-{{ event.icon }}"></i>
-                                </div>
-                                <div class="timeline-content">
-                                    <div class="timeline-header">
-                                        <h6 class="timeline-title">{{ event.title|trans }}</h6>
-                                        <span class="timeline-date">{{ event.date|date('d/m/Y H:i') }}</span>
+            <div class="card-body p-0">
+                {% if procedures.items|length > 0 %}
+                    <div class="procedures-grid">
+                        {% for procedure in procedures.items %}
+                            <div class="procedure-card">
+                                <div class="card h-100">
+                                    <div class="card-header d-flex justify-content-between align-items-start">
+                                        <div class="procedure-info flex-grow-1">
+                                            <h6 class="procedure-name mb-1">
+                                                <a href="{{ path('admin_procedures_show', {'id': procedure.id}) }}" class="text-decoration-none">
+                                                    {{ procedure.name }}
+                                                </a>
+                                            </h6>
+                                            <small class="text-muted">{{ procedure.category|trans }}</small>
+                                        </div>
+                                        <div class="procedure-status">
+                                            <span class="badge bg-{{ procedure.status == 'active' ? 'success' : (procedure.status == 'draft' ? 'warning' : 'secondary') }}">
+                                                {{ procedure.status|trans }}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <p class="timeline-description">{{ event.description|trans }}</p>
-                                    <small class="text-muted">{{ 'by'|trans }} {{ event.user }}</small>
+                                    <div class="card-body">
+                                        <p class="procedure-description text-muted small">
+                                            {{ procedure.description|slice(0, 120) }}{% if procedure.description|length > 120 %}...{% endif %}
+                                        </p>
+                                        <div class="procedure-metrics">
+                                            <div class="row text-center">
+                                                <div class="col-4">
+                                                    <div class="metric-value">{{ procedure.estimated_duration }}</div>
+                                                    <div class="metric-label">{{ 'procedures.duration'|trans }}</div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="metric-value">{{ procedure.success_rate }}%</div>
+                                                    <div class="metric-label">{{ 'procedures.success_rate'|trans }}</div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="metric-value complexity-{{ procedure.complexity }}">
+                                                        {{ procedure.complexity|trans }}
+                                                    </div>
+                                                    <div class="metric-label">{{ 'procedures.complexity'|trans }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-transparent">
+                                        <div class="row align-items-center">
+                                            <div class="col">
+                                                <small class="text-muted">
+                                                    {{ 'procedures.updated'|trans }} {{ procedure.updated_at|date('d/m/Y') }}
+                                                </small>
+                                            </div>
+                                            <div class="col-auto">
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="{{ path('admin_procedures_show', {'id': procedure.id}) }}" 
+                                                       class="btn btn-outline-primary" title="{{ 'actions.view'|trans }}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{{ path('admin_procedures_edit', {'id': procedure.id}) }}" 
+                                                       class="btn btn-outline-secondary" title="{{ 'actions.edit'|trans }}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-outline-success" 
+                                                            onclick="toggleProcedureStatus({{ procedure.id }})" 
+                                                            title="{{ 'procedures.toggle_status'|trans }}">
+                                                        <i class="fas fa-{{ procedure.status == 'active' ? 'pause' : 'play' }}"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-info dropdown-toggle" 
+                                                            data-bs-toggle="dropdown" title="{{ 'actions.more'|trans }}">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="#" onclick="duplicateProcedure({{ procedure.id }})">
+                                                            <i class="fas fa-copy me-2"></i>{{ 'procedures.duplicate'|trans }}
+                                                        </a></li>
+                                                        <li><a class="dropdown-item" href="#" onclick="exportProcedure({{ procedure.id }})">
+                                                            <i class="fas fa-download me-2"></i>{{ 'actions.export'|trans }}
+                                                        </a></li>
+                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li><a class="dropdown-item text-danger" href="#" 
+                                                               data-confirm="{{ 'procedures.confirm_delete'|trans }}">
+                                                            <i class="fas fa-trash me-2"></i>{{ 'actions.delete'|trans }}
+                                                        </a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         {% endfor %}
                     </div>
-                </div>
+                {% else %}
+                    <div class="empty-state text-center py-5">
+                        <i class="fas fa-project-diagram fa-3x text-muted mb-3"></i>
+                        <h4>{{ 'procedures.no_procedures'|trans }}</h4>
+                        <p class="text-muted">{{ 'procedures.no_procedures_message'|trans }}</p>
+                        <a href="{{ path('admin_procedures_new') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>{{ 'procedures.create_first_procedure'|trans }}
+                        </a>
+                    </div>
+                {% endif %}
             </div>
-
-            {# Documents associés #}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-paperclip me-2"></i>{{ 'requests.attached_documents'|trans }}
-                        <span class="badge bg-secondary ms-2">{{ documents|length }}</span>
-                    </h5>
-                </div>
-                <div class="card-body">
-                    {% if documents|length > 0 %}
-                        <div class="documents-list">
-                            {% for document in documents %}
-                                <div class="document-item d-flex align-items-center p-3 border rounded mb-2">
-                                    <div class="document-icon me-3">
-                                        <i class="fas fa-file-{{ document.type == 'application/pdf' ? 'pdf' : 'alt' }} fa-2x text-primary"></i>
-                                    </div>
-                                    <div class="document-info flex-grow-1">
-                                        <h6 class="document-name mb-1">{{ document.name }}</h6>
-                                        <small class="text-muted">
-                                            {{ document.category|trans }} • {{ document.size }} • 
-                                            {{ 'uploaded_on'|trans }} {{ document.uploaded_at|date('d/m/Y H:i') }}
-                                        </small>
-                                    </div>
-                                    <div class="document-actions">
-                                        <a href="#" class="btn btn-sm btn-outline-primary me-1" title="{{ 'actions.view'|trans }}">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-sm btn-outline-secondary" title="{{ 'actions.download'|trans }}">
-                                            <i class="fas fa-download"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            {% endfor %}
+            
+            {# Pagination #}
+            {% if procedures.items|length > 0 %}
+                <div class="card-footer">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="pagination-info">
+                                {{ 'pagination.showing'|trans({
+                                    '%start%': ((pagination.current_page - 1) * 20) + 1,
+                                    '%end%': ((pagination.current_page - 1) * 20) + procedures.items|length,
+                                    '%total%': pagination.total_items
+                                }) }}
+                            </div>
                         </div>
-                    {% else %}
-                        <div class="text-center py-4 text-muted">
-                            <i class="fas fa-folder-open fa-2x mb-2"></i>
-                            <p>{{ 'requests.no_documents'|trans }}</p>
+                        <div class="col-md-6">
+                            {% if pagination.total_pages > 1 %}
+                                <nav aria-label="Pagination">
+                                    <ul class="pagination pagination-sm justify-content-end mb-0">
+                                        {% if pagination.current_page > 1 %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ path('admin_procedures_index', app.request.query.all|merge({'page': pagination.current_page - 1})) }}">
+                                                    <i class="fas fa-chevron-left"></i>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                        
+                                        {% for page in range(max(1, pagination.current_page - 2), min(pagination.total_pages, pagination.current_page + 2)) %}
+                                            <li class="page-item {{ page == pagination.current_page ? 'active' : '' }}">
+                                                <a class="page-link" href="{{ path('admin_procedures_index', app.request.query.all|merge({'page': page})) }}">
+                                                    {{ page }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                        
+                                        {% if pagination.current_page < pagination.total_pages %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ path('admin_procedures_index', app.request.query.all|merge({'page': pagination.current_page + 1})) }}">
+                                                    <i class="fas fa-chevron-right"></i>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            {% endif %}
                         </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        {# Sidebar - Actions et informations secondaires #}
-        <div class="col-lg-4">
-            {# Actions rapides #}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-bolt me-2"></i>{{ 'requests.quick_actions'|trans }}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCommentModal">
-                            <i class="fas fa-comment me-2"></i>{{ 'requests.add_comment'|trans }}
-                        </button>
-                        <button type="button" class="btn btn-success" onclick="changeStatus({{ request.id }}, 'completed')">
-                            <i class="fas fa-check me-2"></i>{{ 'requests.mark_completed'|trans }}
-                        </button>
-                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#assignOfficerModal">
-                            <i class="fas fa-user-plus me-2"></i>{{ 'requests.assign_officer'|trans }}
-                        </button>
-                        <button type="button" class="btn btn-info">
-                            <i class="fas fa-print me-2"></i>{{ 'requests.print_details'|trans }}
-                        </button>
                     </div>
                 </div>
-            </div>
-
-            {# Statistiques de traitement #}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-chart-pie me-2"></i>{{ 'requests.processing_stats'|trans }}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="stat-item d-flex justify-content-between mb-2">
-                        <span>{{ 'requests.avg_processing_time'|trans }}</span>
-                        <strong>7 {{ 'days'|trans }}</strong>
-                    </div>
-                    <div class="stat-item d-flex justify-content-between mb-2">
-                        <span>{{ 'requests.completion_rate'|trans }}</span>
-                        <strong>92%</strong>
-                    </div>
-                    <div class="stat-item d-flex justify-content-between mb-2">
-                        <span>{{ 'requests.similar_requests'|trans }}</span>
-                        <strong>156</strong>
-                    </div>
-                    <div class="stat-item d-flex justify-content-between">
-                        <span>{{ 'requests.current_queue'|trans }}</span>
-                        <strong>23</strong>
-                    </div>
-                </div>
-            </div>
-
-            {# Commentaires et notes #}
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-comments me-2"></i>{{ 'requests.comments'|trans }}
-                        <span class="badge bg-secondary ms-2">{{ comments|length }}</span>
-                    </h5>
-                </div>
-                <div class="card-body">
-                    {% if comments|length > 0 %}
-                        <div class="comments-list">
-                            {% for comment in comments %}
-                                <div class="comment-item mb-3 p-3 {{ comment.is_internal ? 'bg-light' : 'bg-white' }} border rounded">
-                                    <div class="comment-header d-flex justify-content-between align-items-center mb-2">
-                                        <div class="comment-author">
-                                            <strong>{{ comment.author }}</strong>
-                                            {% if comment.is_internal %}
-                                                <span class="badge bg-warning badge-sm ms-1">{{ 'internal'|trans }}</span>
-                                            {% endif %}
-                                        </div>
-                                        <small class="text-muted">{{ comment.created_at|date('d/m H:i') }}</small>
-                                    </div>
-                                    <div class="comment-content">
-                                        {{ comment.comment|nl2br }}
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="text-center py-3 text-muted">
-                            <i class="fas fa-comment-slash fa-2x mb-2"></i>
-                            <p>{{ 'requests.no_comments'|trans }}</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+            {% endif %}
         </div>
     </div>
-</div>
 
-{# Modal d'ajout de commentaire #}
-<div class="modal fade" id="addCommentModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ 'requests.add_comment'|trans }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="commentForm">
-                    <div class="mb-3">
-                        <label for="commentText" class="form-label">{{ 'requests.comment'|trans }}</label>
-                        <textarea class="form-control" id="commentText" name="comment" rows="4" required></textarea>
+    {# Raccourcis d'actions rapides #}
+    <div class="procedures-shortcuts mt-4">
+        <div class="row g-3">
+            <div class="col-lg-3 col-md-6">
+                <div class="shortcut-card card h-100">
+                    <div class="card-body text-center">
+                        <div class="shortcut-icon mb-3">
+                            <i class="fas fa-sitemap fa-2x text-primary"></i>
+                        </div>
+                        <h6>{{ 'procedures.workflows'|trans }}</h6>
+                        <p class="text-muted small">{{ 'procedures.manage_workflows'|trans }}</p>
+                        <a href="{{ path('admin_procedures_workflows') }}" class="btn btn-outline-primary btn-sm">
+                            {{ 'procedures.manage'|trans }}
+                        </a>
                     </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="isInternal" name="is_internal">
-                        <label class="form-check-label" for="isInternal">
-                            {{ 'requests.internal_comment'|trans }}
-                        </label>
-                    </div>
-                </form>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
-                <button type="button" class="btn btn-primary" onclick="addComment()">{{ 'actions.add_comment'|trans }}</button>
+            <div class="col-lg-3 col-md-6">
+                <div class="shortcut-card card h-100">
+                    <div class="card-body text-center">
+                        <div class="shortcut-icon mb-3">
+                            <i class="fas fa-chart-line fa-2x text-success"></i>
+                        </div>
+                        <h6>{{ 'procedures.analytics'|trans }}</h6>
+                        <p class="text-muted small">{{ 'procedures.performance_analytics'|trans }}</p>
+                        <a href="{{ path('admin_procedures_analytics') }}" class="btn btn-outline-success btn-sm">
+                            {{ 'procedures.view_analytics'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="shortcut-card card h-100">
+                    <div class="card-body text-center">
+                        <div class="shortcut-icon mb-3">
+                            <i class="fas fa-file-import fa-2x text-info"></i>
+                        </div>
+                        <h6>{{ 'procedures.templates'|trans }}</h6>
+                        <p class="text-muted small">{{ 'procedures.procedure_templates'|trans }}</p>
+                        <a href="#" class="btn btn-outline-info btn-sm">
+                            {{ 'procedures.browse_templates'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="shortcut-card card h-100">
+                    <div class="card-body text-center">
+                        <div class="shortcut-icon mb-3">
+                            <i class="fas fa-tools fa-2x text-warning"></i>
+                        </div>
+                        <h6>{{ 'procedures.optimization'|trans }}</h6>
+                        <p class="text-muted small">{{ 'procedures.optimize_procedures'|trans }}</p>
+                        <a href="#" class="btn btn-outline-warning btn-sm">
+                            {{ 'procedures.run_optimization'|trans }}
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -340,156 +413,181 @@
 
 {% block stylesheets %}
 <style>
-.info-group .info-label {
-    font-size: 0.875rem;
+.procedures-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.procedure-card .card {
+    transition: all 0.3s ease;
+    border: 1px solid #dee2e6;
+}
+
+.procedure-card .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    border-color: var(--primary-color);
+}
+
+.procedure-name a {
+    color: var(--dark-color);
     font-weight: 600;
+}
+
+.procedure-name a:hover {
+    color: var(--primary-color);
+}
+
+.procedure-description {
+    line-height: 1.4;
+    margin-bottom: 1rem;
+}
+
+.procedure-metrics {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.metric-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.metric-label {
+    font-size: 0.75rem;
     color: #6c757d;
-    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.info-group .info-value {
-    font-size: 1rem;
-    color: #212529;
+.complexity-simple {
+    color: #28a745;
 }
 
-.timeline {
-    position: relative;
-    padding-left: 2rem;
+.complexity-medium {
+    color: #ffc107;
 }
 
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: 1rem;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background-color: #dee2e6;
+.complexity-complex {
+    color: #dc3545;
 }
 
-.timeline-item {
-    position: relative;
-    margin-bottom: 2rem;
+.shortcut-card {
+    transition: all 0.3s ease;
 }
 
-.timeline-marker {
-    position: absolute;
-    left: -2.5rem;
-    top: 0;
-    width: 2rem;
-    height: 2rem;
+.shortcut-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.shortcut-icon {
+    width: 4rem;
+    height: 4rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-size: 0.75rem;
-    border: 3px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 0 auto;
+    background-color: rgba(var(--primary-rgb), 0.1);
 }
 
-.timeline-content {
-    background: white;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid #dee2e6;
+.stat-box {
+    border: none;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
 }
 
-.timeline-header {
-    display: flex;
-    justify-content: between;
-    align-items: center;
-    margin-bottom: 0.5rem;
+.stat-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
-.timeline-title {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.timeline-date {
-    font-size: 0.75rem;
-    color: #6c757d;
-}
-
-.timeline-description {
-    margin: 0;
-    color: #495057;
-}
-
-.document-item {
-    transition: all 0.2s ease;
-}
-
-.document-item:hover {
-    background-color: #f8f9fa !important;
-    transform: translateX(5px);
-}
-
-.comment-item {
-    border-left: 4px solid #007bff;
-}
-
-.comment-item.bg-light {
-    border-left-color: #ffc107;
-}
-
-.stat-item {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #eee;
-}
-
-.stat-item:last-child {
-    border-bottom: none;
+@media (max-width: 767.98px) {
+    .procedures-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+        gap: 1rem;
+    }
+    
+    .procedure-metrics .row {
+        text-align: center !important;
+    }
+    
+    .shortcut-card {
+        margin-bottom: 1rem;
+    }
 }
 </style>
 {% endblock %}
 
 {% block javascripts %}
 <script>
-function addComment() {
-    const form = document.getElementById('commentForm');
-    const formData = new FormData(form);
-    
-    // Simulation d'ajout de commentaire
-    fetch(`{{ path('admin_requests_add_comment', {'id': request.id}) }}`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Fermer le modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addCommentModal'));
-            modal.hide();
-            
-            // Afficher une notification de succès
-            showNotification('Comment added successfully', 'success');
-            
-            // Recharger la page pour afficher le nouveau commentaire
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
-        } else {
-            showNotification('Error adding comment: ' + data.message, 'error');
-        }
-    })
-    .catch(error => {
-        showNotification('Network error occurred', 'error');
-        console.error('Error:', error);
-    });
+function toggleProcedureStatus(procedureId) {
+    if (confirm('{{ 'procedures.confirm_toggle_status'|trans }}')) {
+        fetch(`{{ path('admin_procedures_toggle_status', {'id': '__ID__'})|replace({'__ID__': ''}) }}${procedureId}`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                showNotification(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            showNotification('{{ 'error.network'|trans }}', 'error');
+            console.error('Error:', error);
+        });
+    }
+}
+
+function duplicateProcedure(procedureId) {
+    if (confirm('{{ 'procedures.confirm_duplicate'|trans }}')) {
+        fetch(`{{ path('admin_procedures_duplicate', {'id': '__ID__'})|replace({'__ID__': ''}) }}${procedureId}`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                setTimeout(() => {
+                    window.location.href = `{{ path('admin_procedures_edit', {'id': '__ID__'})|replace({'__ID__': ''}) }}${data.new_id}`;
+                }, 1000);
+            } else {
+                showNotification(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            showNotification('{{ 'error.network'|trans }}', 'error');
+            console.error('Error:', error);
+        });
+    }
+}
+
+function exportProcedure(procedureId) {
+    window.open(`{{ path('admin_procedures_export', {'format': 'pdf'})|replace({'format': 'pdf'}) }}pdf?procedure_id=${procedureId}`, '_blank');
 }
 
 function showNotification(message, type) {
-    // Utiliser la fonction de notification globale
     if (typeof adminCore !== 'undefined') {
         adminCore.showNotification(message, type);
     } else {
-        alert(message); // Fallback
+        alert(message);
     }
 }
 </script>
