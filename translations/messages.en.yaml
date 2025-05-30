@@ -1,0 +1,309 @@
+# MK Gov Back Office - English Translations
+
+# Global
+app:
+  name: 'MK Gov Back Office'
+  subtitle: 'Digital Government Portal Administration'
+  version: '1.0.0'
+
+# Navigation
+menu:
+  dashboard: 'Dashboard'
+  services: 'Services'
+  requests: 'Requests'
+  requests_list: 'All Requests'
+  new_request: 'New Request'
+  procedures: 'Procedures & Workflows'
+  procedures_list: 'All Procedures'
+  new_procedure: 'New Procedure'
+  workflows: 'Workflows'
+  documents: 'Documents'
+  documents_list: 'All Documents'
+  upload_document: 'Upload Document'
+  archive: 'Archive'
+  administration: 'Administration'
+  users: 'User Management'
+  users_list: 'All Users'
+  new_user: 'New User'
+  roles_permissions: 'Roles & Permissions'
+  public_entities: 'Public Entities'
+  entities_list: 'All Entities'
+  new_entity: 'New Entity'
+  system: 'System'
+  settings: 'Settings'
+  reference_data: 'Reference Data'
+  logs: 'System Logs'
+  backup: 'Backup & Restore'
+
+# Dashboard
+dashboard:
+  title: 'Administrative Dashboard'
+  subtitle: 'Real-time overview of government services and citizen requests'
+  interactive_map: 'Interactive Map of Cameroon'
+  recent_requests: 'Recent Requests'
+
+# Charts
+charts:
+  requests_by_status: 'Requests by Status'
+  top_services: 'Top Services'
+  monthly_trends: 'Monthly Trends'
+  completion_by_region: 'Completion Rate by Region'
+  pending_by_admin: 'Pending by Administration'
+
+# Filters
+filters:
+  title: 'Filters & Controls'
+  region: 'Region'
+  all_regions: 'All Regions'
+  service_family: 'Service Family'
+  all_services: 'All Services'
+  status: 'Status'
+  all_statuses: 'All Statuses'
+  year: 'Year'
+  search_and_filter: 'Search & Filter'
+  search: 'Search'
+  search_placeholder: 'Search by reference, name, email...'
+  service_type: 'Service Type'
+  date_range: 'Date Range'
+
+# Statistics
+stats:
+  total_requests: 'Total Requests'
+  pending_requests: 'Pending Requests'
+  processing_requests: 'Processing'
+  completed_requests: 'Completed'
+  completion_rate: 'Completion Rate'
+  increase: '+%value%%'
+  decrease: '-%value%%'
+  stable: 'Stable'
+  live: 'Live'
+
+# Requests
+requests:
+  title: 'Request Management'
+  subtitle: 'Manage citizen service requests'
+  list_title: 'Request List'
+  reference: 'Reference'
+  service: 'Service'
+  citizen: 'Citizen'
+  region: 'Region'
+  status: 'Status'
+  created_at: 'Created'
+  priority: 'Priority'
+  selected: 'requests selected'
+  no_requests: 'No Requests Found'
+  no_requests_message: 'No requests match your current filters. Try adjusting your search criteria or create a new request.'
+
+# Status
+status:
+  pending: 'Pending'
+  processing: 'Processing'
+  completed: 'Completed'
+  rejected: 'Rejected'
+  under_review: 'Under Review'
+  payment_pending: 'Payment Pending'
+  ready_for_pickup: 'Ready for Pickup'
+  cancelled: 'Cancelled'
+
+# Actions
+actions:
+  title: 'Actions'
+  new_request: 'New Request'
+  create_first_request: 'Create First Request'
+  export: 'Export'
+  export_selected: 'Export Selected'
+  refresh: 'Refresh'
+  apply_filters: 'Apply Filters'
+  clear_filters: 'Clear Filters'
+  search: 'Search'
+  clear: 'Clear'
+  view: 'View'
+  edit: 'Edit'
+  delete: 'Delete'
+  archive: 'Archive'
+  restore: 'Restore'
+  change_status: 'Change Status'
+  mark_processing: 'Mark as Processing'
+  mark_completed: 'Mark as Completed'
+  view_all: 'View All'
+
+# Pagination
+pagination:
+  showing: 'Showing %start% to %end% of %total% results'
+  previous: 'Previous'
+  next: 'Next'
+  first: 'First'
+  last: 'Last'
+
+# File Formats
+formats:
+  pdf: 'PDF'
+  excel: 'Excel'
+  csv: 'CSV'
+
+# User Interface
+user:
+  admin: 'Administrator'
+  signed_in_as: 'Signed in as'
+  profile: 'My Profile'
+  settings: 'Settings'
+  logout: 'Logout'
+
+# Notifications
+notifications:
+  title: 'Notifications'
+  you_have: 'You have'
+  new: 'new notifications'
+  unread: 'unread notifications'
+  view_all: 'View All Notifications'
+  new_request: 'New Request'
+  passport_request: 'New passport application received'
+
+# Help
+help:
+  contact_support: 'Contact Support'
+  faq: 'Frequently Asked Questions'
+  user_guide: 'User Guide'
+  documentation: 'Documentation'
+
+# System
+system:
+  version: 'Version'
+  status: 'Status'
+  online: 'Online'
+  offline: 'Offline'
+
+# Time
+time:
+  just_now: 'Just now'
+  minutes_ago: '%count% minutes ago'
+  hours_ago: '%count% hours ago'
+  days_ago: '%count% days ago'
+  weeks_ago: '%count% weeks ago'
+
+# Forms
+forms:
+  required_fields: 'Required fields are marked with *'
+  save: 'Save'
+  save_and_continue: 'Save & Continue'
+  cancel: 'Cancel'
+  submit: 'Submit'
+  reset: 'Reset'
+  loading: 'Loading...'
+  saving: 'Saving...'
+  saved: 'Saved successfully'
+  error: 'An error occurred'
+
+# Validation
+validation:
+  required: 'This field is required'
+  email: 'Please enter a valid email address'
+  phone: 'Please enter a valid phone number'
+  min_length: 'Minimum %count% characters required'
+  max_length: 'Maximum %count% characters allowed'
+  invalid_format: 'Invalid format'
+
+# Confirmation
+confirm:
+  delete: 'Are you sure you want to delete this item?'
+  archive: 'Are you sure you want to archive this item?'
+  restore: 'Are you sure you want to restore this item?'
+  cancel: 'Are you sure you want to cancel? Unsaved changes will be lost.'
+
+# Success Messages
+success:
+  created: 'Item created successfully'
+  updated: 'Item updated successfully'
+  deleted: 'Item deleted successfully'
+  archived: 'Item archived successfully'
+  restored: 'Item restored successfully'
+  exported: 'Data exported successfully'
+  imported: 'Data imported successfully'
+  saved: 'Changes saved successfully'
+
+# Error Messages
+error:
+  general: 'An error occurred. Please try again.'
+  not_found: 'Item not found'
+  unauthorized: 'You are not authorized to perform this action'
+  validation_failed: 'Please check the form for errors'
+  network: 'Network error. Please check your connection.'
+  server: 'Server error. Please contact support if the problem persists.'
+
+# Loading States
+loading: 'Loading...'
+processing: 'Processing...'
+saving: 'Saving...'
+deleting: 'Deleting...'
+exporting: 'Exporting...'
+
+# Empty States
+empty:
+  no_data: 'No data available'
+  no_results: 'No results found'
+  try_different_search: 'Try a different search term'
+  no_requests: 'No requests found'
+  no_documents: 'No documents found'
+  no_users: 'No users found'
+
+# Service Categories
+categories:
+  police_justice: 'Police & Justice'
+  family: 'Family Services'
+  transport: 'Transport'
+  education: 'Education'
+  business: 'Business'
+  public_service: 'Public Service'
+  land_construction: 'Land & Construction'
+  consular: 'Consular Services'
+  health: 'Health'
+  civic_life: 'Civic Life'
+
+# Regions
+regions:
+  adamawa: 'Adamawa'
+  centre: 'Centre'
+  east: 'East'
+  far_north: 'Far North'
+  littoral: 'Littoral'
+  north: 'North'
+  northwest: 'Northwest'
+  south: 'South'
+  southwest: 'Southwest'
+  west: 'West'
+
+# Priority Levels
+priority:
+  low: 'Low'
+  normal: 'Normal'
+  medium: 'Medium'
+  high: 'High'
+  urgent: 'Urgent'
+
+# Export
+export:
+  title: 'Export Data'
+  format: 'Export Format'
+  date_range: 'Date Range'
+  filters: 'Applied Filters'
+  generating: 'Generating export...'
+  download_ready: 'Download ready'
+  download: 'Download'
+
+# Bulk Actions
+bulk:
+  selected: '%count% item(s) selected'
+  select_all: 'Select All'
+  deselect_all: 'Deselect All'
+  actions: 'Bulk Actions'
+  change_status: 'Change Status'
+  export: 'Export Selected'
+  delete: 'Delete Selected'
+  archive: 'Archive Selected'
+
+# Admin
+admin:
+  title: 'Administration'
+  subtitle: 'System administration and configuration'
+  welcome: 'Welcome to MK Gov Administration'
+  overview: 'System Overview'

@@ -1,0 +1,57 @@
+# config/routes.yaml
+
+# Route principale de l'administration
+admin:
+    path: /admin
+    controller: App\Controller\DashboardController::index
+    methods: [GET]
+
+# Routes du dashboard avec filtres
+admin_dashboard:
+    resource: App\Controller\DashboardController
+    type: attribute
+    prefix: /admin/dashboard
+
+# Routes pour la gestion des demandes
+admin_requests:
+    resource: App\Controller\RequestController
+    type: attribute
+    prefix: /admin/requests
+
+# Routes pour la gestion des procédures
+admin_procedures:
+    resource: App\Controller\ProcedureController
+    type: attribute
+    prefix: /admin/procedures
+
+# Routes pour la gestion des documents
+admin_documents:
+    resource: App\Controller\DocumentController
+    type: attribute
+    prefix: /admin/documents
+
+# Routes pour la gestion des utilisateurs
+admin_users:
+    resource: App\Controller\UserController
+    type: attribute
+    prefix: /admin/users
+
+# Routes pour la gestion des entités publiques
+admin_public_entities:
+    resource: App\Controller\PublicEntityController
+    type: attribute
+    prefix: /admin/public-entities
+
+# Routes pour les paramètres système
+admin_system:
+    resource: App\Controller\SystemController
+    type: attribute
+    prefix: /admin/system
+
+# Route pour changer la langue
+admin_locale:
+    path: /admin/locale/{locale}
+    controller: App\Controller\LocaleController::changeLocale
+    methods: [GET]
+    requirements:
+        locale: en|fr

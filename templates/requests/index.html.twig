@@ -1,0 +1,391 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'requests.title'|trans }} - {{ parent() }}{% endblock %}
+
+{% block content %}
+<div class="requests-container">
+    {# En-tête de la page #}
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="page-title">
+                    <i class="fas fa-file-alt me-3"></i>
+                    {{ 'requests.title'|trans }}
+                </h1>
+                <p class="page-subtitle text-muted">
+                    {{ 'requests.subtitle'|trans }}
+                </p>
+            </div>
+            <div class="col-lg-6 text-lg-end">
+                <div class="page-actions">
+                    <a href="{{ path('admin_requests_new') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>{{ 'actions.new_request'|trans }}
+                    </a>
+                    <div class="btn-group ms-2" role="group">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-download me-1"></i>{{ 'actions.export'|trans }}
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ path('admin_requests_export', {'format': 'excel'}) }}">
+                                <i class="fas fa-file-excel me-2"></i>{{ 'formats.excel'|trans }}
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ path('admin_requests_export', {'format': 'csv'}) }}">
+                                <i class="fas fa-file-csv me-2"></i>{{ 'formats.csv'|trans }}
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Statistiques rapides #}
+    <div class="requests-stats mb-4">
+        <div class="row g-3">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box card border-start border-primary border-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stat-icon bg-primary text-white rounded me-3">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0">{{ statistics.total ?? 0 }}</h4>
+                                <small class="text-muted">{{ 'stats.total_requests'|trans }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box card border-start border-warning border-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stat-icon bg-warning text-white rounded me-3">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0">{{ statistics.pending ?? 0 }}</h4>
+                                <small class="text-muted">{{ 'stats.pending_requests'|trans }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box card border-start border-info border-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stat-icon bg-info text-white rounded me-3">
+                                <i class="fas fa-sync-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0">{{ statistics.processing ?? 0 }}</h4>
+                                <small class="text-muted">{{ 'stats.processing_requests'|trans }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box card border-start border-success border-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stat-icon bg-success text-white rounded me-3">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0">{{ statistics.completed ?? 0 }}</h4>
+                                <small class="text-muted">{{ 'stats.completed_requests'|trans }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Filtres de recherche #}
+    <div class="requests-filters mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-search me-2"></i>{{ 'filters.search_and_filter'|trans }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{{ path('admin_requests_index') }}" id="filtersForm">
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <label for="search" class="form-label">{{ 'filters.search'|trans }}</label>
+                            <input type="text" class="form-control" id="search" name="search" 
+                                   value="{{ current_filters.search }}" 
+                                   placeholder="{{ 'filters.search_placeholder'|trans }}">
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <label for="status" class="form-label">{{ 'filters.status'|trans }}</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="">{{ 'filters.all_statuses'|trans }}</option>
+                                {% for status in statuses %}
+                                    <option value="{{ status.value }}" {{ current_filters.status == status.value ? 'selected' : '' }}>
+                                        {{ status.label|trans }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <label for="service_type" class="form-label">{{ 'filters.service_type'|trans }}</label>
+                            <select class="form-select" id="service_type" name="service_type">
+                                <option value="">{{ 'filters.all_services'|trans }}</option>
+                                {% for service in service_types %}
+                                    <option value="{{ service.id }}" {{ current_filters.service_type == service.id ? 'selected' : '' }}>
+                                        {{ service.name|trans }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <label for="region" class="form-label">{{ 'filters.region'|trans }}</label>
+                            <select class="form-select" id="region" name="region">
+                                <option value="">{{ 'filters.all_regions'|trans }}</option>
+                                {% for region in regions %}
+                                    <option value="{{ region.id }}" {{ current_filters.region == region.id ? 'selected' : '' }}>
+                                        {{ region.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <label for="date_range" class="form-label">{{ 'filters.date_range'|trans }}</label>
+                            <div class="input-group">
+                                <input type="date" class="form-control" name="date_from" value="{{ current_filters.date_from }}">
+                                <span class="input-group-text">-</span>
+                                <input type="date" class="form-control" name="date_to" value="{{ current_filters.date_to }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-1"></i>{{ 'actions.search'|trans }}
+                            </button>
+                            <a href="{{ path('admin_requests_index') }}" class="btn btn-outline-secondary ms-2">
+                                <i class="fas fa-times me-1"></i>{{ 'actions.clear'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {# Liste des demandes #}
+    <div class="requests-list">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="card-title mb-0">
+                            {{ 'requests.list_title'|trans }} 
+                            <span class="badge bg-secondary">{{ pagination.total_items }}</span>
+                        </h5>
+                    </div>
+                    <div class="col-auto">
+                        <div class="row g-2">
+                            <div class="col-auto">
+                                <select class="form-select form-select-sm" id="itemsPerPage" onchange="changeItemsPerPage(this.value)">
+                                    <option value="10" {{ app.request.get('limit') == '10' ? 'selected' : '' }}>10</option>
+                                    <option value="20" {{ app.request.get('limit') == '20' ? 'selected' : '' }}>20</option>
+                                    <option value="50" {{ app.request.get('limit') == '50' ? 'selected' : '' }}>50</option>
+                                    <option value="100" {{ app.request.get('limit') == '100' ? 'selected' : '' }}>100</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if requests.items|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" class="form-check-input" id="selectAll">
+                                    </th>
+                                    <th>{{ 'requests.reference'|trans }}</th>
+                                    <th>{{ 'requests.service'|trans }}</th>
+                                    <th>{{ 'requests.citizen'|trans }}</th>
+                                    <th>{{ 'requests.region'|trans }}</th>
+                                    <th>{{ 'requests.status'|trans }}</th>
+                                    <th>{{ 'requests.created_at'|trans }}</th>
+                                    <th>{{ 'requests.priority'|trans }}</th>
+                                    <th class="text-center">{{ 'actions.title'|trans }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for request in requests.items %}
+                                    <tr class="request-row" data-id="{{ request.id }}">
+                                        <td>
+                                            <input type="checkbox" class="form-check-input request-checkbox" value="{{ request.id }}">
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('admin_requests_show', {'id': request.id}) }}" class="text-decoration-none">
+                                                <strong>{{ request.reference }}</strong>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <div class="service-info">
+                                                <i class="fas fa-{{ request.service_icon ?? 'file' }} me-2 text-primary"></i>
+                                                {{ request.service_name|trans }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="citizen-info">
+                                                <strong>{{ request.citizen_name }}</strong>
+                                                <br>
+                                                <small class="text-muted">{{ request.citizen_email }}</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-dark">{{ request.region }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{{ request.status_color }} status-badge" data-id="{{ request.id }}">
+                                                <i class="fas fa-{{ request.status_icon }} me-1"></i>
+                                                {{ request.status|trans }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="text-nowrap">{{ request.created_at|date('d/m/Y H:i') }}</span>
+                                            <br>
+                                            <small class="text-muted">{{ request.created_at|time_diff }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{{ request.priority <= 2 ? 'danger' : (request.priority <= 3 ? 'warning' : 'secondary') }}">
+                                                {{ request.priority <= 2 ? 'High' : (request.priority <= 3 ? 'Medium' : 'Normal') }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{{ path('admin_requests_show', {'id': request.id}) }}" 
+                                                   class="btn btn-outline-primary" title="{{ 'actions.view'|trans }}">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ path('admin_requests_edit', {'id': request.id}) }}" 
+                                                   class="btn btn-outline-secondary" title="{{ 'actions.edit'|trans }}">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-outline-success dropdown-toggle" 
+                                                        data-bs-toggle="dropdown" title="{{ 'actions.change_status'|trans }}">
+                                                    <i class="fas fa-exchange-alt"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="changeStatus({{ request.id }}, 'processing')">
+                                                        <i class="fas fa-play me-2"></i>{{ 'status.processing'|trans }}
+                                                    </a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="changeStatus({{ request.id }}, 'completed')">
+                                                        <i class="fas fa-check me-2"></i>{{ 'status.completed'|trans }}
+                                                    </a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="changeStatus({{ request.id }}, 'rejected')">
+                                                        <i class="fas fa-times me-2"></i>{{ 'status.rejected'|trans }}
+                                                    </a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h4>{{ 'requests.no_requests'|trans }}</h4>
+                        <p class="text-muted">{{ 'requests.no_requests_message'|trans }}</p>
+                        <a href="{{ path('admin_requests_new') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>{{ 'actions.create_first_request'|trans }}
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+            
+            {# Pagination #}
+            {% if requests.items|length > 0 %}
+                <div class="card-footer">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="pagination-info">
+                                {{ 'pagination.showing'|trans({
+                                    '%start%': ((pagination.current_page - 1) * 20) + 1,
+                                    '%end%': ((pagination.current_page - 1) * 20) + requests.items|length,
+                                    '%total%': pagination.total_items
+                                }) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {% if pagination.total_pages > 1 %}
+                                <nav aria-label="Pagination">
+                                    <ul class="pagination pagination-sm justify-content-end mb-0">
+                                        {% if pagination.current_page > 1 %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ path('admin_requests_index', app.request.query.all|merge({'page': pagination.current_page - 1})) }}">
+                                                    <i class="fas fa-chevron-left"></i>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                        
+                                        {% for page in range(max(1, pagination.current_page - 2), min(pagination.total_pages, pagination.current_page + 2)) %}
+                                            <li class="page-item {{ page == pagination.current_page ? 'active' : '' }}">
+                                                <a class="page-link" href="{{ path('admin_requests_index', app.request.query.all|merge({'page': page})) }}">
+                                                    {{ page }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                        
+                                        {% if pagination.current_page < pagination.total_pages %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ path('admin_requests_index', app.request.query.all|merge({'page': pagination.current_page + 1})) }}">
+                                                    <i class="fas fa-chevron-right"></i>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Actions groupées #}
+    <div class="bulk-actions mt-3" id="bulkActions" style="display: none;">
+        <div class="card border-primary">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span id="selectedCount">0</span> {{ 'requests.selected'|trans }}
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-success" onclick="bulkChangeStatus('processing')">
+                            <i class="fas fa-play me-1"></i>{{ 'actions.mark_processing'|trans }}
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="bulkChangeStatus('completed')">
+                            <i class="fas fa-check me-1"></i>{{ 'actions.mark_completed'|trans }}
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="bulkExport()">
+                            <i class="fas fa-download me-1"></i>{{ 'actions.export_selected'|trans }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{ asset('js/requests.js') }}"></script>
+{% endblock %}

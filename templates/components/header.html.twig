@@ -1,0 +1,150 @@
+{# Header principal de l'administration #}
+<header class="admin-header bg-primary text-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            {# Logo et titre de l'application #}
+            <div class="navbar-brand d-flex align-items-center">
+                <img src="{{ asset('images/mk-gov-logo.png') }}" alt="MK Gov" height="40" class="me-2">
+                <div class="brand-text">
+                    <span class="brand-title">{{ app_name }}</span>
+                    <small class="brand-subtitle d-block">{{ 'admin.subtitle'|trans }}</small>
+                </div>
+            </div>
+
+            {# Bouton de basculement pour mobile #}
+            <button class="navbar-toggler" type="button" id="sidebarToggle">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            {# Navigation et actions #}
+            <div class="navbar-nav ms-auto d-flex align-items-center">
+                {# Sélecteur de langue #}
+                <div class="nav-item dropdown me-3">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-globe me-1"></i>
+                        <span class="flag-icon">{{ app.request.locale == 'fr' ? '🇫🇷' : '🇺🇸' }}</span>
+                        {{ app.request.locale == 'fr' ? 'Français' : 'English' }}
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item {{ app.request.locale == 'en' ? 'active' : '' }}" 
+                               href="{{ path('admin_locale', {'locale': 'en'}) }}">
+                                <span class="flag-icon me-2">🇺🇸</span>English
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {{ app.request.locale == 'fr' ? 'active' : '' }}" 
+                               href="{{ path('admin_locale', {'locale': 'fr'}) }}">
+                                <span class="flag-icon me-2">🇫🇷</span>Français
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                {# Notifications #}
+                <div class="nav-item dropdown me-3">
+                    <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            5
+                            <span class="visually-hidden">{{ 'notifications.unread'|trans }}</span>
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end notification-dropdown">
+                        <div class="dropdown-header">
+                            <h6 class="mb-0">{{ 'notifications.title'|trans }}</h6>
+                            <small class="text-muted">{{ 'notifications.you_have'|trans }} 5 {{ 'notifications.new'|trans }}</small>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item notification-item" href="#">
+                            <div class="d-flex">
+                                <div class="notification-icon bg-success">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <div class="notification-title">{{ 'notifications.new_request'|trans }}</div>
+                                    <div class="notification-text">{{ 'notifications.passport_request'|trans }}</div>
+                                    <small class="text-muted">{{ 'time.minutes_ago'|trans({'%count%': 5}) }}</small>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-center" href="#">
+                            {{ 'notifications.view_all'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                {# Menu utilisateur #}
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <div class="user-avatar">
+                            <img src="{{ asset('images/default-avatar.png') }}" alt="User" class="rounded-circle" width="32" height="32">
+                        </div>
+                        <span class="user-name ms-2">{{ 'user.admin'|trans }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <div class="dropdown-header">
+                                <strong>{{ 'user.signed_in_as'|trans }}</strong>
+                                <br>
+                                <small class="text-muted">admin@mkgov.cm</small>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-user me-2"></i>{{ 'user.profile'|trans }}
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-cog me-2"></i>{{ 'user.settings'|trans }}
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="#">
+                                <i class="fas fa-sign-out-alt me-2"></i>{{ 'user.logout'|trans }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    {# Barre d'actions rapides #}
+    <div class="quick-actions-bar bg-primary-dark py-2">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="quick-stats d-flex align-items-center">
+                    <div class="stat-item me-4">
+                        <i class="fas fa-file-alt me-2"></i>
+                        <span class="stat-number">{{ 1247 }}</span>
+                        <small class="text-white-50 ms-1">{{ 'stats.pending_requests'|trans }}</small>
+                    </div>
+                    <div class="stat-item me-4">
+                        <i class="fas fa-clock me-2"></i>
+                        <span class="stat-number">{{ 89 }}</span>
+                        <small class="text-white-50 ms-1">{{ 'stats.processing'|trans }}</small>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span class="stat-number">{{ 95.2 }}%</span>
+                        <small class="text-white-50 ms-1">{{ 'stats.completion_rate'|trans }}</small>
+                    </div>
+                </div>
+                
+                <div class="quick-actions">
+                    <a href="{{ path('admin_requests_new') }}" class="btn btn-light btn-sm me-2">
+                        <i class="fas fa-plus me-1"></i>{{ 'actions.new_request'|trans }}
+                    </a>
+                    <a href="#" class="btn btn-outline-light btn-sm" id="refreshData">
+                        <i class="fas fa-sync-alt me-1"></i>{{ 'actions.refresh'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

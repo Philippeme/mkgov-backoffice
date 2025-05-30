@@ -1,0 +1,244 @@
+{# Sidebar de navigation principale #}
+<aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-content">
+        {# Menu principal de navigation #}
+        <nav class="sidebar-nav">
+            <ul class="nav flex-column">
+                {# Dashboard #}
+                <li class="nav-item">
+                    <a class="nav-link {{ app.request.attributes.get('_route') starts with 'admin_dashboard' ? 'active' : '' }}" 
+                       href="{{ path('admin_dashboard_index') }}">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <span class="nav-text">{{ 'menu.dashboard'|trans }}</span>
+                        <span class="nav-badge badge bg-info">{{ 'live'|trans }}</span>
+                    </a>
+                </li>
+
+                {# Séparateur #}
+                <li class="nav-divider">
+                    <span class="nav-divider-text">{{ 'menu.services'|trans }}</span>
+                </li>
+
+                {# Gestion des demandes #}
+                <li class="nav-item">
+                    <a class="nav-link {{ app.request.attributes.get('_route') starts with 'admin_requests' ? 'active' : '' }}" 
+                       href="#" data-bs-toggle="collapse" data-bs-target="#requestsSubmenu">
+                        <i class="nav-icon fas fa-file-alt"></i>
+                        <span class="nav-text">{{ 'menu.requests'|trans }}</span>
+                        <span class="nav-badge badge bg-warning">{{ 1247 }}</span>
+                        <i class="nav-arrow fas fa-chevron-down"></i>
+                    </a>
+                    <div class="collapse {{ app.request.attributes.get('_route') starts with 'admin_requests' ? 'show' : '' }}" 
+                         id="requestsSubmenu">
+                        <ul class="nav flex-column submenu">
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.attributes.get('_route') == 'admin_requests_index' ? 'active' : '' }}" 
+                                   href="{{ path('admin_requests_index') }}">
+                                    <i class="nav-icon fas fa-list"></i>
+                                    <span class="nav-text">{{ 'menu.requests_list'|trans }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.attributes.get('_route') == 'admin_requests_new' ? 'active' : '' }}" 
+                                   href="{{ path('admin_requests_new') }}">
+                                    <i class="nav-icon fas fa-plus"></i>
+                                    <span class="nav-text">{{ 'menu.new_request'|trans }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                {# Procédures et workflows #}
+                <li class="nav-item">
+                    <a class="nav-link {{ app.request.attributes.get('_route') starts with 'admin_procedures' ? 'active' : '' }}" 
+                       href="#" data-bs-toggle="collapse" data-bs-target="#proceduresSubmenu">
+                        <i class="nav-icon fas fa-project-diagram"></i>
+                        <span class="nav-text">{{ 'menu.procedures'|trans }}</span>
+                        <i class="nav-arrow fas fa-chevron-down"></i>
+                    </a>
+                    <div class="collapse {{ app.request.attributes.get('_route') starts with 'admin_procedures' ? 'show' : '' }}" 
+                         id="proceduresSubmenu">
+                        <ul class="nav flex-column submenu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-list"></i>
+                                    <span class="nav-text">{{ 'menu.procedures_list'|trans }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-plus"></i>
+                                    <span class="nav-text">{{ 'menu.new_procedure'|trans }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-sitemap"></i>
+                                    <span class="nav-text">{{ 'menu.workflows'|trans }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                {# Documents #}
+                <li class="nav-item">
+                    <a class="nav-link {{ app.request.attributes.get('_route') starts with 'admin_documents' ? 'active' : '' }}" 
+                       href="#" data-bs-toggle="collapse" data-bs-target="#documentsSubmenu">
+                        <i class="nav-icon fas fa-folder-open"></i>
+                        <span class="nav-text">{{ 'menu.documents'|trans }}</span>
+                        <i class="nav-arrow fas fa-chevron-down"></i>
+                    </a>
+                    <div class="collapse {{ app.request.attributes.get('_route') starts with 'admin_documents' ? 'show' : '' }}" 
+                         id="documentsSubmenu">
+                        <ul class="nav flex-column submenu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-list"></i>
+                                    <span class="nav-text">{{ 'menu.documents_list'|trans }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-upload"></i>
+                                    <span class="nav-text">{{ 'menu.upload_document'|trans }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-archive"></i>
+                                    <span class="nav-text">{{ 'menu.archive'|trans }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                {# Séparateur #}
+                <li class="nav-divider">
+                    <span class="nav-divider-text">{{ 'menu.administration'|trans }}</span>
+                </li>
+
+                {# Gestion des utilisateurs #}
+                <li class="nav-item">
+                    <a class="nav-link {{ app.request.attributes.get('_route') starts with 'admin_users' ? 'active' : '' }}" 
+                       href="#" data-bs-toggle="collapse" data-bs-target="#usersSubmenu">
+                        <i class="nav-icon fas fa-users"></i>
+                        <span class="nav-text">{{ 'menu.users'|trans }}</span>
+                        <i class="nav-arrow fas fa-chevron-down"></i>
+                    </a>
+                    <div class="collapse {{ app.request.attributes.get('_route') starts with 'admin_users' ? 'show' : '' }}" 
+                         id="usersSubmenu">
+                        <ul class="nav flex-column submenu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-list"></i>
+                                    <span class="nav-text">{{ 'menu.users_list'|trans }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-user-plus"></i>
+                                    <span class="nav-text">{{ 'menu.new_user'|trans }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-user-shield"></i>
+                                    <span class="nav-text">{{ 'menu.roles_permissions'|trans }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                {# Entités publiques #}
+                <li class="nav-item">
+                    <a class="nav-link {{ app.request.attributes.get('_route') starts with 'admin_public_entities' ? 'active' : '' }}" 
+                       href="#" data-bs-toggle="collapse" data-bs-target="#entitiesSubmenu">
+                        <i class="nav-icon fas fa-building"></i>
+                        <span class="nav-text">{{ 'menu.public_entities'|trans }}</span>
+                        <i class="nav-arrow fas fa-chevron-down"></i>
+                    </a>
+                    <div class="collapse {{ app.request.attributes.get('_route') starts with 'admin_public_entities' ? 'show' : '' }}" 
+                         id="entitiesSubmenu">
+                        <ul class="nav flex-column submenu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-list"></i>
+                                    <span class="nav-text">{{ 'menu.entities_list'|trans }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-plus"></i>
+                                    <span class="nav-text">{{ 'menu.new_entity'|trans }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                {# Séparateur #}
+                <li class="nav-divider">
+                    <span class="nav-divider-text">{{ 'menu.system'|trans }}</span>
+                </li>
+
+                {# Système #}
+                <li class="nav-item">
+                    <a class="nav-link {{ app.request.attributes.get('_route') starts with 'admin_system' ? 'active' : '' }}" 
+                       href="#" data-bs-toggle="collapse" data-bs-target="#systemSubmenu">
+                        <i class="nav-icon fas fa-cogs"></i>
+                        <span class="nav-text">{{ 'menu.system'|trans }}</span>
+                        <i class="nav-arrow fas fa-chevron-down"></i>
+                    </a>
+                    <div class="collapse {{ app.request.attributes.get('_route') starts with 'admin_system' ? 'show' : '' }}" 
+                         id="systemSubmenu">
+                        <ul class="nav flex-column submenu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-sliders-h"></i>
+                                    <span class="nav-text">{{ 'menu.settings'|trans }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-database"></i>
+                                    <span class="nav-text">{{ 'menu.reference_data'|trans }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-history"></i>
+                                    <span class="nav-text">{{ 'menu.logs'|trans }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-download"></i>
+                                    <span class="nav-text">{{ 'menu.backup'|trans }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
+        {# Informations système en bas #}
+        <div class="sidebar-footer">
+            <div class="system-info">
+                <div class="info-item">
+                    <span class="info-label">{{ 'system.version'|trans }}:</span>
+                    <span class="info-value">{{ app_version }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">{{ 'system.status'|trans }}:</span>
+                    <span class="status-indicator status-online"></span>
+                    <span class="info-value">{{ 'system.online'|trans }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>

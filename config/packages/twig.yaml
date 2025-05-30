@@ -1,0 +1,22 @@
+# config/packages/twig.yaml
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    form_themes:
+        - 'bootstrap_5_layout.html.twig'
+    globals:
+        app_name: 'MK Gov Back Office'
+        app_version: '1.0.0'
+        default_locale: 'en'
+        supported_locales: ['en', 'fr']
+
+when@dev:
+    twig:
+        debug: true
+        strict_variables: true
+        auto_reload: true
+
+when@prod:
+    twig:
+        debug: false
+        strict_variables: false
+        auto_reload: false

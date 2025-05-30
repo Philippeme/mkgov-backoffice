@@ -1,0 +1,328 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'dashboard.title'|trans }} - {{ parent() }}{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    {# En-tête du tableau de bord #}
+    <div class="dashboard-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-tachometer-alt me-3"></i>
+                    {{ 'dashboard.title'|trans }}
+                </h1>
+                <p class="dashboard-subtitle text-muted">
+                    {{ 'dashboard.subtitle'|trans }}
+                </p>
+            </div>
+            <div class="col-lg-6 text-lg-end">
+                <div class="dashboard-actions">
+                    <button type="button" class="btn btn-outline-primary btn-sm me-2" id="refreshDashboard">
+                        <i class="fas fa-sync-alt me-1"></i>{{ 'actions.refresh'|trans }}
+                    </button>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-download me-1"></i>{{ 'actions.export'|trans }}
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ path('admin_dashboard_export', {'format': 'pdf'}) }}">
+                                <i class="fas fa-file-pdf me-2"></i>{{ 'formats.pdf'|trans }}
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ path('admin_dashboard_export', {'format': 'excel'}) }}">
+                                <i class="fas fa-file-excel me-2"></i>{{ 'formats.excel'|trans }}
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ path('admin_dashboard_export', {'format': 'csv'}) }}">
+                                <i class="fas fa-file-csv me-2"></i>{{ 'formats.csv'|trans }}
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Filtres de contrôle interactifs #}
+    <div class="dashboard-filters mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-filter me-2"></i>{{ 'filters.title'|trans }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-lg-3 col-md-6">
+                        <label for="regionFilter" class="form-label">{{ 'filters.region'|trans }}</label>
+                        <select class="form-select" id="regionFilter" name="region">
+                            <option value="">{{ 'filters.all_regions'|trans }}</option>
+                            {% for region in regions %}
+                                <option value="{{ region.id }}">{{ region.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label for="serviceFilter" class="form-label">{{ 'filters.service_family'|trans }}</label>
+                        <select class="form-select" id="serviceFilter" name="service_family">
+                            <option value="">{{ 'filters.all_services'|trans }}</option>
+                            {% for category in service_categories %}
+                                <option value="{{ category.id }}">{{ category.name|trans }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label for="statusFilter" class="form-label">{{ 'filters.status'|trans }}</label>
+                        <select class="form-select" id="statusFilter" name="status">
+                            <option value="">{{ 'filters.all_statuses'|trans }}</option>
+                            <option value="pending">{{ 'status.pending'|trans }}</option>
+                            <option value="processing">{{ 'status.processing'|trans }}</option>
+                            <option value="completed">{{ 'status.completed'|trans }}</option>
+                            <option value="rejected">{{ 'status.rejected'|trans }}</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label for="yearFilter" class="form-label">{{ 'filters.year'|trans }}</label>
+                        <select class="form-select" id="yearFilter" name="year">
+                            {% for year in available_years %}
+                                <option value="{{ year }}" {{ year == current_year ? 'selected' : '' }}>{{ year }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary" id="applyFilters">
+                            <i class="fas fa-search me-1"></i>{{ 'actions.apply_filters'|trans }}
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary ms-2" id="clearFilters">
+                            <i class="fas fa-times me-1"></i>{{ 'actions.clear_filters'|trans }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Statistiques principales #}
+    <div class="dashboard-stats mb-4">
+        <div class="row g-3">
+            <div class="col-xl-3 col-lg-6">
+                <div class="stat-card card border-start border-primary border-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stat-icon bg-primary text-white rounded-circle me-3">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number mb-0" id="totalRequests">{{ statistics.total_requests ?? 0 }}</h3>
+                                <p class="stat-label text-muted mb-0">{{ 'stats.total_requests'|trans }}</p>
+                                <small class="stat-change text-success">
+                                    <i class="fas fa-arrow-up me-1"></i>{{ 'stats.increase'|trans({'%value%': '12.5'}) }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+                <div class="stat-card card border-start border-success border-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stat-icon bg-success text-white rounded-circle me-3">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number mb-0" id="completedRequests">{{ statistics.completed_requests ?? 0 }}</h3>
+                                <p class="stat-label text-muted mb-0">{{ 'stats.completed_requests'|trans }}</p>
+                                <small class="stat-change text-success">
+                                    <i class="fas fa-arrow-up me-1"></i>{{ 'stats.increase'|trans({'%value%': '8.3'}) }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+                <div class="stat-card card border-start border-warning border-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stat-icon bg-warning text-white rounded-circle me-3">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number mb-0" id="processingRequests">{{ statistics.processing_requests ?? 0 }}</h3>
+                                <p class="stat-label text-muted mb-0">{{ 'stats.processing_requests'|trans }}</p>
+                                <small class="stat-change text-warning">
+                                    <i class="fas fa-minus me-1"></i>{{ 'stats.stable'|trans }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+                <div class="stat-card card border-start border-info border-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stat-icon bg-info text-white rounded-circle me-3">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number mb-0" id="completionRate">{{ statistics.completion_rate ?? 0 }}%</h3>
+                                <p class="stat-label text-muted mb-0">{{ 'stats.completion_rate'|trans }}</p>
+                                <small class="stat-change text-success">
+                                    <i class="fas fa-arrow-up me-1"></i>{{ 'stats.increase'|trans({'%value%': '2.1'}) }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Contenu principal avec carte et graphiques #}
+    <div class="dashboard-content">
+        <div class="row g-4">
+            {# Carte interactive du Cameroun #}
+            <div class="col-xl-8">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-map-marked-alt me-2"></i>{{ 'dashboard.interactive_map'|trans }}
+                        </h5>
+                        <div class="card-tools">
+                            <button class="btn btn-sm btn-outline-secondary" id="fullscreenMap">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="cameroonMap" style="height: 500px; width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            {# Graphiques de synthèse #}
+            <div class="col-xl-4">
+                <div class="row g-3">
+                    {# Graphique en donut des statuts #}
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="card-title mb-0">{{ 'charts.requests_by_status'|trans }}</h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="statusDonutChart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Graphique en barres des services #}
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="card-title mb-0">{{ 'charts.top_services'|trans }}</h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="servicesBarChart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Deuxième ligne de graphiques #}
+        <div class="row g-4 mt-0">
+            {# Graphique linéaire des tendances mensuelles #}
+            <div class="col-xl-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-line me-2"></i>{{ 'charts.monthly_trends'|trans }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="monthlyTrendsChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            {# Tableau des demandes récentes #}
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-clock me-2"></i>{{ 'dashboard.recent_requests'|trans }}
+                        </h5>
+                        <div class="card-tools">
+                            <a href="{{ path('admin_requests_index') }}" class="btn btn-sm btn-primary">
+                                {{ 'actions.view_all'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush" id="recentRequestsList">
+                            {# Le contenu sera chargé dynamiquement #}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Troisième ligne - Graphiques détaillés #}
+        <div class="row g-4 mt-0">
+            {# Taux de complétion par région #}
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-bar me-2"></i>{{ 'charts.completion_by_region'|trans }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="regionalCompletionChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            {# Demandes en attente par administration #}
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-building me-2"></i>{{ 'charts.pending_by_admin'|trans }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="pendingByAdminChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{ asset('js/dashboard.js') }}"></script>
+{% endblock %}
+
+{% block inline_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialisation du tableau de bord avec les données
+    const dashboardData = {
+        regions: {{ regions|json_encode|raw }},
+        serviceCategories: {{ service_categories|json_encode|raw }},
+        statistics: {{ statistics|json_encode|raw }}
+    };
+    
+    // Initialisation du dashboard
+    if (typeof Dashboard !== 'undefined') {
+        new Dashboard(dashboardData);
+    }
+});
+</script>
+{% endblock %}
