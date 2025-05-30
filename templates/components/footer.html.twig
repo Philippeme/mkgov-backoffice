@@ -1,0 +1,201 @@
+{# Footer principal du backoffice MK Gov #}
+<footer class="admin-footer bg-light border-top mt-auto">
+    <div class="container-fluid">
+        <div class="row align-items-center py-3">
+            <div class="col-md-6">
+                <div class="footer-info">
+                    <p class="mb-1">
+                        <strong>{{ app_name }}</strong> - {{ 'admin.subtitle'|trans }}
+                    </p>
+                    <small class="text-muted">
+                        {{ 'system.version'|trans }} {{ app_version }} | 
+                        © {{ 'now'|date('Y') }} {{ 'app.name'|trans }}. 
+                        {{ 'All rights reserved'|trans }}.
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <div class="footer-links">
+                    <a href="#" class="text-decoration-none me-3">
+                        <i class="fas fa-question-circle me-1"></i>
+                        {{ 'help.faq'|trans }}
+                    </a>
+                    <a href="#" class="text-decoration-none me-3">
+                        <i class="fas fa-book me-1"></i>
+                        {{ 'help.user_guide'|trans }}
+                    </a>
+                    <a href="#" class="text-decoration-none">
+                        <i class="fas fa-headset me-1"></i>
+                        {{ 'help.contact_support'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        {# Informations système détaillées en mode développement #}
+        {% if app.environment == 'dev' %}
+            <div class="row border-top pt-2 pb-1">
+                <div class="col-12">
+                    <div class="system-debug-info">
+                        <small class="text-muted">
+                            <strong>Debug Info:</strong>
+                            Environment: <code>{{ app.environment }}</code> |
+                            Symfony: <code>{{ constant('Symfony\\Component\\HttpKernel\\Kernel::VERSION') }}</code> |
+                            PHP: <code>{{ constant('PHP_VERSION') }}</code> |
+                            Locale: <code>{{ app.request.locale }}</code> |
+                            Route: <code>{{ app.request.attributes.get('_route') }}</code>
+                            {% if app.user %}
+                                | User: <code>{{ app.user.userIdentifier ?? 'anonymous' }}</code>
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</footer>
+
+{# Scripts additionnels pour le footer #}
+<script>
+// Gestion des liens d'aide
+document.addEventListener('DOMContentLoaded', function() {
+    // Liens d'aide modaux ou externes
+    const helpLinks = document.querySelectorAll('.footer-links a[href="#"]');
+    helpLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const linkText = this.textContent.trim();
+            
+            // Simulation d'ouverture de fenêtre d'aide
+            if (linkText.includes('FAQ')) {
+                showHelpModal('FAQ', 'Frequently Asked Questions will be displayed here.');
+            } else if (linkText.includes('Guide')) {
+                showHelpModal('User Guide', 'User documentation will be displayed here.');
+            } else if (linkText.includes('Support')) {
+                showHelpModal('Contact Support', 'Support contact information will be displayed here.');
+            }
+        });
+    });
+});
+
+// Fonction d'affichage des modaux d'aide
+function showHelpModal(title, content) {
+    // Vérifier si Bootstrap est disponible
+    if (typeof bootstrap !== 'undefined') {
+        // Créer un modal Bootstrap dynamique
+        const modalHtml = `
+            <div class="modal fade" id="helpModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="fas fa-info-circle me-2"></i>${title}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>${content}</p>
+                            <div class="alert alert-info">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                This feature will be fully implemented in the next version.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Supprimer l'ancien modal s'il existe
+        const existingModal = document.getElementById('helpModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        // Ajouter le nouveau modal
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        const modal = new bootstrap.Modal(document.getElementById('helpModal'));
+        modal.show();
+        
+        // Nettoyer après fermeture
+        document.getElementById('helpModal').addEventListener('hidden.bs.modal', function() {
+            this.remove();
+        });
+    } else {
+        // Fallback simple si Bootstrap n'est pas disponible
+        alert(`${title}\n\n${content}`);
+    }
+}
+
+// Mise à jour de l'heure en temps réel (optionnel)
+function updateSystemTime() {
+    const timeElements = document.querySelectorAll('.system-time');
+    const now = new Date();
+    const timeString = now.toLocaleTimeString();
+    
+    timeElements.forEach(element => {
+        element.textContent = timeString;
+    });
+}
+
+// Mettre à jour l'heure toutes les secondes
+setInterval(updateSystemTime, 1000);
+</script>
+
+{# Styles additionnels pour le footer #}
+<style>
+.admin-footer {
+    margin-top: auto;
+    font-size: 0.875rem;
+}
+
+.footer-info p {
+    margin-bottom: 0.25rem;
+}
+
+.footer-links a {
+    color: #6c757d;
+    font-size: 0.875rem;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: var(--primary-color);
+}
+
+.system-debug-info {
+    font-family: 'Courier New', monospace;
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+
+.system-debug-info code {
+    background-color: #e9ecef;
+    padding: 0.125rem 0.25rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+}
+
+@media (max-width: 767.98px) {
+    .admin-footer .col-md-6:last-child {
+        text-align: left !important;
+        margin-top: 1rem;
+    }
+    
+    .footer-links a {
+        display: block;
+        margin: 0.25rem 0;
+    }
+    
+    .system-debug-info {
+        font-size: 0.7rem;
+        word-break: break-all;
+    }
+}
+</style>

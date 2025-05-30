@@ -1,0 +1,233 @@
+{# Fil d'Ariane (Breadcrumb) Navigation #}
+{% if app.request.attributes.get('_route') != 'admin_dashboard_index' %}
+    <nav aria-label="breadcrumb" class="breadcrumb-container">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ path('admin_dashboard_index') }}" class="text-decoration-none">
+                    <i class="fas fa-home me-1"></i>
+                    {{ 'menu.dashboard'|trans }}
+                </a>
+            </li>
+            
+            {% set route = app.request.attributes.get('_route') %}
+            {% set routeParts = route|split('_') %}
+            
+            {# Dashboard section #}
+            {% if route starts with 'admin_dashboard' %}
+                <li class="breadcrumb-item active" aria-current="page">
+                    <i class="fas fa-tachometer-alt me-1"></i>
+                    {{ 'menu.dashboard'|trans }}
+                </li>
+            {% endif %}
+            
+            {# Requests section #}
+            {% if route starts with 'admin_requests' %}
+                {% if route == 'admin_requests_index' %}
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-file-alt me-1"></i>
+                        {{ 'menu.requests'|trans }}
+                    </li>
+                {% elseif route == 'admin_requests_new' %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('admin_requests_index') }}" class="text-decoration-none">
+                            <i class="fas fa-file-alt me-1"></i>
+                            {{ 'menu.requests'|trans }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-plus me-1"></i>
+                        {{ 'menu.new_request'|trans }}
+                    </li>
+                {% elseif route == 'admin_requests_show' %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('admin_requests_index') }}" class="text-decoration-none">
+                            <i class="fas fa-file-alt me-1"></i>
+                            {{ 'menu.requests'|trans }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-eye me-1"></i>
+                        {{ 'actions.view'|trans }}
+                    </li>
+                {% elseif route == 'admin_requests_edit' %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('admin_requests_index') }}" class="text-decoration-none">
+                            <i class="fas fa-file-alt me-1"></i>
+                            {{ 'menu.requests'|trans }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-edit me-1"></i>
+                        {{ 'actions.edit'|trans }}
+                    </li>
+                {% endif %}
+            {% endif %}
+            
+            {# Procedures section #}
+            {% if route starts with 'admin_procedures' %}
+                {% if route == 'admin_procedures_index' %}
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-project-diagram me-1"></i>
+                        {{ 'menu.procedures'|trans }}
+                    </li>
+                {% elseif route == 'admin_procedures_new' %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('admin_procedures_index') }}" class="text-decoration-none">
+                            <i class="fas fa-project-diagram me-1"></i>
+                            {{ 'menu.procedures'|trans }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-plus me-1"></i>
+                        {{ 'menu.new_procedure'|trans }}
+                    </li>
+                {% elseif route == 'admin_procedures_workflows' %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('admin_procedures_index') }}" class="text-decoration-none">
+                            <i class="fas fa-project-diagram me-1"></i>
+                            {{ 'menu.procedures'|trans }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-sitemap me-1"></i>
+                        {{ 'menu.workflows'|trans }}
+                    </li>
+                {% endif %}
+            {% endif %}
+            
+            {# Documents section #}
+            {% if route starts with 'admin_documents' %}
+                {% if route == 'admin_documents_index' %}
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-folder-open me-1"></i>
+                        {{ 'menu.documents'|trans }}
+                    </li>
+                {% elseif route == 'admin_documents_new' %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('admin_documents_index') }}" class="text-decoration-none">
+                            <i class="fas fa-folder-open me-1"></i>
+                            {{ 'menu.documents'|trans }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-upload me-1"></i>
+                        {{ 'menu.upload_document'|trans }}
+                    </li>
+                {% elseif route == 'admin_documents_archive' %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('admin_documents_index') }}" class="text-decoration-none">
+                            <i class="fas fa-folder-open me-1"></i>
+                            {{ 'menu.documents'|trans }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-archive me-1"></i>
+                        {{ 'menu.archive'|trans }}
+                    </li>
+                {% endif %}
+            {% endif %}
+            
+            {# Users section #}
+            {% if route starts with 'admin_users' %}
+                {% if route == 'admin_users_index' %}
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-users me-1"></i>
+                        {{ 'menu.users'|trans }}
+                    </li>
+                {% elseif route == 'admin_users_new' %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('admin_users_index') }}" class="text-decoration-none">
+                            <i class="fas fa-users me-1"></i>
+                            {{ 'menu.users'|trans }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-user-plus me-1"></i>
+                        {{ 'menu.new_user'|trans }}
+                    </li>
+                {% elseif route == 'admin_users_roles' %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('admin_users_index') }}" class="text-decoration-none">
+                            <i class="fas fa-users me-1"></i>
+                            {{ 'menu.users'|trans }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-user-shield me-1"></i>
+                        {{ 'menu.roles_permissions'|trans }}
+                    </li>
+                {% endif %}
+            {% endif %}
+            
+            {# Public Entities section #}
+            {% if route starts with 'admin_public_entities' %}
+                {% if route == 'admin_public_entities_index' %}
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-building me-1"></i>
+                        {{ 'menu.public_entities'|trans }}
+                    </li>
+                {% elseif route == 'admin_public_entities_new' %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('admin_public_entities_index') }}" class="text-decoration-none">
+                            <i class="fas fa-building me-1"></i>
+                            {{ 'menu.public_entities'|trans }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-plus me-1"></i>
+                        {{ 'menu.new_entity'|trans }}
+                    </li>
+                {% endif %}
+            {% endif %}
+            
+            {# System section #}
+            {% if route starts with 'admin_system' %}
+                {% if route == 'admin_system_settings' %}
+                    <li class="breadcrumb-item">
+                        <span class="text-muted">
+                            <i class="fas fa-cogs me-1"></i>
+                            {{ 'menu.system'|trans }}
+                        </span>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-sliders-h me-1"></i>
+                        {{ 'menu.settings'|trans }}
+                    </li>
+                {% elseif route == 'admin_system_reference_data' %}
+                    <li class="breadcrumb-item">
+                        <span class="text-muted">
+                            <i class="fas fa-cogs me-1"></i>
+                            {{ 'menu.system'|trans }}
+                        </span>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-database me-1"></i>
+                        {{ 'menu.reference_data'|trans }}
+                    </li>
+                {% elseif route == 'admin_system_logs' %}
+                    <li class="breadcrumb-item">
+                        <span class="text-muted">
+                            <i class="fas fa-cogs me-1"></i>
+                            {{ 'menu.system'|trans }}
+                        </span>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-history me-1"></i>
+                        {{ 'menu.logs'|trans }}
+                    </li>
+                {% elseif route == 'admin_system_backup' %}
+                    <li class="breadcrumb-item">
+                        <span class="text-muted">
+                            <i class="fas fa-cogs me-1"></i>
+                            {{ 'menu.system'|trans }}
+                        </span>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-download me-1"></i>
+                        {{ 'menu.backup'|trans }}
+                    </li>
+                {% endif %}
+            {% endif %}
+        </ol>
+    </nav>
+{% endif %}
